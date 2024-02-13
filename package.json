@@ -19,7 +19,13 @@
     "frontend:build": "nx build frontend",
     "frontend:e2e": "nx e2e frontend-e2e",
     "frontend:test": "nx test frontend",
-    "frontend:test-cov": "nx test frontend --coverage"
+    "frontend:test-cov": "nx test frontend --coverage",
+    "migrate:dev": "npx prisma migrate dev",
+    "migrate:dev:create": "npx prisma migrate dev --create-only",
+    "migrate:deploy": "npx prisma migrate deploy",
+    "prisma:generate": "npx prisma generate",
+    "prisma:studio": "npx prisma studio",
+    "prisma:seed": "npx prisma db seed"
   },
   "ts-node": {
     "compilerOptions": {
@@ -42,7 +48,7 @@
     "bcrypt": "^5.1.1",
     "chalk": "^5.3.0",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
+    "class-validator": "^0.14.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "crypto-js": "^4.2.0",
@@ -165,5 +171,8 @@
     "vite-plugin-dts": "~2.3.0",
     "vitest": "~0.34.6"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.0.2",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }
 }
