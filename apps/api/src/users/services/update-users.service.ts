@@ -1,6 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UsersRepository } from '../users.repository';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { hashSync } from 'bcrypt';
+import { PASSWORD_HASH_SALT } from '@ocmi/api/constants';
 
 @Injectable()
 export class UpdateUserService {
@@ -8,7 +10,15 @@ export class UpdateUserService {
 
   async execute(id: number, updateUserDto: UpdateUserDto) {
     await this.validateEmailAvailability(updateUserDto, id);
-    return await this.usersRepository.update(id, updateUserDto);
+    if (updateUserDto.password) {
+      updateUserDto.password = hashSync(
+        updateUserDto.password,
+        PASSWORD_HASH_SALT,
+      );
+    }
+    const user = await this.usersRepository.update(id, updateUserDto);
+    delete user.password;
+    return user;
   }
 
   private async validateEmailAvailability(
