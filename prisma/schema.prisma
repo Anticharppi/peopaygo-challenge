@@ -9,3 +9,53 @@ datasource db {
   provider = "mysql"
   url      = env("DB_URL")
 }
+
+model User {
+  id         Int         @id @default(autoincrement())
+  email      String      @unique
+  name       String
+  password   String
+  isAdmin    Boolean     @default(false) @map("is_admin")
+  timesheets Timesheet[]
+  employees  Employee[]
+
+  @@map("users")
+}
+
+model Employee {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userId    Int      @map("user_id")
+  createdBy User     @relation(fields: [userId], references: [id])
+
+  @@map("employees")
+}
+
+model Timesheet {
+  id          Int             @id @default(autoincrement())
+  rate        Float
+  grossWage   Float           @map("gross_wage")
+  paymentType PaymentTypes    @map("payment_type")
+  status      TimesheetStatus @default(Pending)
+  notes       String?
+  hours       Int?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  userId      Int             @map("user_id")
+  user        User            @relation(fields: [userId], references: [id])
+
+  @@map("timesheets")
+}
+
+enum PaymentTypes {
+  Hourly
+  Salary
+}
+
+enum TimesheetStatus {
+  Pending
+  Approved
+  Rejected
+}
