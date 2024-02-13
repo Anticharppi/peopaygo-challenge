@@ -23,24 +23,31 @@ model User {
 }
 
 model Employee {
-  id        Int    @id @default(autoincrement())
-  name      String
-  userId    Int    @map("user_id")
-  createdBy User   @relation(fields: [userId], references: [id])
+  id          Int          @id @default(autoincrement())
+  name        String
+  userId      Int          @map("user_id")
+  rate        Float
+  paymentType PaymentTypes @map("payment_type")
+
+  createdBy  User        @relation(fields: [userId], references: [id])
+  timesheets Timesheet[]
 
   @@map("employees")
 }
 
 model Timesheet {
-  id          Int             @id @default(autoincrement())
-  rate        Float
-  grossWage   Float           @map("gross_wage")
-  paymentType PaymentTypes    @map("payment_type")
-  status      TimesheetStatus @default(Pending)
-  notes       String?
-  hours       Int?
-  userId      Int             @map("user_id")
-  user        User            @relation(fields: [userId], references: [id])
+  id         Int             @id @default(autoincrement())
+  grossWage  Float           @map("gross_wage")
+  status     TimesheetStatus @default(Pending)
+  notes      String?
+  hours      Int?
+  userId     Int             @map("user_id")
+  user       User            @relation(fields: [userId], references: [id])
+  employee   Employee        @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  from       DateTime
+  to         DateTime
+  emitted    DateTime        @default(now()) @map("emitted_at")
 
   @@map("timesheets")
 }

@@ -171,8 +171,5 @@
     "vite-plugin-dts": "~2.3.0",
     "vitest": "~0.34.6"
   },
-  "packageManager": "yarn@4.0.2",
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
-  }
+  "packageManager": "yarn@4.0.2"
 }

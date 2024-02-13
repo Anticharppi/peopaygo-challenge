@@ -16,10 +16,10 @@ export class EmployeesRepository {
     });
   }
 
-  async findAll(params: Pagination): Promise<Employee[]> {
+  async findAll(pagination: Pagination): Promise<Employee[]> {
     return await this.prisma.employee.findMany({
-      skip: params.offset,
-      take: params.limit,
+      skip: pagination.offset,
+      take: pagination.limit,
     });
   }
 
