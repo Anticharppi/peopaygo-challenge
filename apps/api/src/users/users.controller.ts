@@ -6,11 +6,13 @@ import {
   Param,
   Query,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUsersService, UpdateUserService } from './services';
 import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -18,16 +20,14 @@ export class UsersController {
     private readonly getUsersService: GetUsersService,
   ) {}
 
-  @UseGuards(AuthGuard)
   @Get()
   async findAll(
-    @Query('offset') offset: number = 0,
-    @Query('limit') limit: number = 10,
+    @Query('offset', ParseIntPipe) offset: number = 0,
+    @Query('limit', ParseIntPipe) limit: number = 10,
   ) {
     return await this.getUsersService.execute({ offset, limit });
   }
 
-  @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.updateUserService.execute(+id, updateUserDto);

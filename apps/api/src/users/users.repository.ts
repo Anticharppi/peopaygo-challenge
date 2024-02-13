@@ -7,7 +7,7 @@ import { PrismaService } from 'nestjs-prisma';
 export class UsersRepository {
   constructor(private prisma: PrismaService) {}
 
-  create(data: Prisma.UserCreateInput): Promise<User> {
+  create(data: Omit<User, 'id'>): Promise<User> {
     return this.prisma.user.create({ data });
   }
 
