@@ -1,23 +1,17 @@
 import { PaymentTypes, TimesheetStatus } from '@prisma/client';
 import {
   Allow,
-  IsDecimal,
+  IsDateString,
   IsEnum,
   IsInt,
+  IsNumber,
   IsString,
   Min,
 } from 'class-validator';
 
 export class CreateTimesheetDto {
-  @IsDecimal()
-  @Min(12.0)
-  rate: number;
-
-  @IsDecimal()
+  @IsInt()
   grossWage: number;
-
-  @IsEnum(PaymentTypes)
-  paymentType: PaymentTypes;
 
   @IsString()
   @Allow(null)
@@ -26,6 +20,19 @@ export class CreateTimesheetDto {
   @IsInt()
   @Allow(null)
   hours: number;
+
+  @IsNumber()
+  @Min(12.0)
+  rate: number;
+
+  @IsEnum(PaymentTypes)
+  paymentType: PaymentTypes;
+
+  @IsDateString()
+  from: Date;
+
+  @IsDateString()
+  to: Date;
 
   @IsInt()
   employeeId: number;

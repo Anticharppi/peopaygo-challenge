@@ -36,18 +36,20 @@ model Employee {
 }
 
 model Timesheet {
-  id         Int             @id @default(autoincrement())
-  grossWage  Float           @map("gross_wage")
-  status     TimesheetStatus @default(Pending)
-  notes      String?
-  hours      Int?
-  userId     Int             @map("user_id")
-  user       User            @relation(fields: [userId], references: [id])
-  employee   Employee        @relation(fields: [employeeId], references: [id])
-  employeeId Int
-  from       DateTime
-  to         DateTime
-  emitted    DateTime        @default(now()) @map("emitted_at")
+  id          Int             @id @default(autoincrement())
+  grossWage   Float           @map("gross_wage")
+  status      TimesheetStatus @default(Pending)
+  notes       String?
+  hours       Int?
+  rate        Float
+  paymentType PaymentTypes    @map("payment_type")
+  userId      Int             @map("user_id")
+  user        User            @relation(fields: [userId], references: [id])
+  employee    Employee        @relation(fields: [employeeId], references: [id])
+  employeeId  Int
+  from        DateTime
+  to          DateTime
+  emitted     DateTime        @default(now()) @map("emitted_at")
 
   @@map("timesheets")
 }

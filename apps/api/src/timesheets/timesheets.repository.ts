@@ -7,14 +7,31 @@ import { Pagination } from '../types';
 export class TimesheetsRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: Omit<Timesheet, 'id'>) {
+  async create(data: Omit<Timesheet, 'id' | 'emitted'>) {
     return await this.prisma.timesheet.create({ data });
   }
 
   async update(id: number, data: Partial<Timesheet>) {
     return await this.prisma.timesheet.update({
       where: { id },
-      data,
+      data: {
+        from: data.from,
+        to: data.to,
+        status: data.status,
+        notes: data.notes,
+        hours: data.hours,
+        grossWage: data.grossWage,
+        user: {
+          connect: {
+            id: data.userId,
+          },
+        },
+        employee: {
+          connect: {
+            id: data.employeeId,
+          },
+        },
+      },
     });
   }
 

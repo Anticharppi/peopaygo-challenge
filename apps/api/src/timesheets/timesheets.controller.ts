@@ -1,34 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TimesheetsService } from './timesheets.service';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
-import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
+import { CreateTimesheetService } from './services/create-timesheet.service';
+import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('timesheets')
 export class TimesheetsController {
-  constructor(private readonly timesheetsService: TimesheetsService) {}
+  constructor(
+    private readonly createTimesheetService: CreateTimesheetService,
+  ) {}
 
   @Post()
-  create(@Body() createTimesheetDto: CreateTimesheetDto) {
-    return this.timesheetsService.create(createTimesheetDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.timesheetsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.timesheetsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTimesheetDto: UpdateTimesheetDto) {
-    return this.timesheetsService.update(+id, updateTimesheetDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.timesheetsService.remove(+id);
+  create(@Body() createTimesheetDto: CreateTimesheetDto, @Req() request) {
+    createTimesheetDto.userId = request.user.sub;
+    return this.createTimesheetService.execute(createTimesheetDto);
   }
 }

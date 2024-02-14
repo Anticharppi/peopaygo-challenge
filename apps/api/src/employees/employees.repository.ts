@@ -7,10 +7,12 @@ import { Injectable } from '@nestjs/common';
 export class EmployeesRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: Pick<Employee, 'name' | 'userId'>) {
+  async create(data: Omit<Employee, 'id'>) {
     return await this.prisma.employee.create({
       data: {
         name: data.name,
+        paymentType: data.paymentType,
+        rate: data.rate,
         createdBy: { connect: { id: data.userId } },
       },
     });
