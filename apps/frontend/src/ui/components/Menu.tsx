@@ -1,8 +1,12 @@
 'use client';
 
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useAppSelector } from '@ocmi/frontend/lib/hooks';
+import {
+  Bars3Icon,
+  XMarkIcon,
+  UserCircleIcon,
+} from '@heroicons/react/24/outline';
+import { useAppSelector, useAuth } from '@ocmi/frontend/lib/hooks';
 import { usePathname } from 'next/navigation';
 import React, { Fragment, PropsWithChildren } from 'react';
 
@@ -17,6 +21,7 @@ function classNames(...classes: string[]) {
 
 export const DashboardMenu: React.FC<PropsWithChildren> = ({ children }) => {
   const { user } = useAppSelector((state) => state.auth);
+  const { signOut } = useAuth();
   const pathName = usePathname().replace('/', '');
   return (
     <div className="min-h-full">
@@ -59,6 +64,7 @@ export const DashboardMenu: React.FC<PropsWithChildren> = ({ children }) => {
                         <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                           <span className="absolute -inset-1.5" />
                           <span className="sr-only">Open user menu</span>
+                          <UserCircleIcon className="h-8 w-8 rounded-full bg-white" />
                         </Menu.Button>
                       </div>
                       <Transition
@@ -86,14 +92,15 @@ export const DashboardMenu: React.FC<PropsWithChildren> = ({ children }) => {
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <button
+                              <a
+                                onClick={() => signOut()}
                                 className={classNames(
                                   active ? 'bg-gray-100' : '',
                                   'block px-4 py-2 text-sm text-gray-700',
                                 )}
                               >
                                 Sign out
-                              </button>
+                              </a>
                             )}
                           </Menu.Item>
                         </Menu.Items>
@@ -144,10 +151,10 @@ export const DashboardMenu: React.FC<PropsWithChildren> = ({ children }) => {
                 <div className="flex items-center px-5">
                   <div className="ml-3">
                     <div className="text-base font-medium leading-none text-white">
-                      {user!.name}
+                      {user?.name}
                     </div>
                     <div className="text-sm font-medium leading-none text-gray-400">
-                      {user!.email}
+                      {user?.email}
                     </div>
                   </div>
                 </div>
@@ -180,7 +187,7 @@ export const DashboardMenu: React.FC<PropsWithChildren> = ({ children }) => {
         </div>
       </header>
       <main>
-        <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">{children}</div>
+        <div className="mx-auto max-w-7xl px-10 py-6 sm:px-6 lg:px-8">{children}</div>
       </main>
     </div>
   );

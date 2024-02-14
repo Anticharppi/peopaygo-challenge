@@ -1,6 +1,7 @@
 import { User } from '@ocmi/frontend/types';
 import { createSlice } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { getSafetyLocalStorage } from '../../utils';
 
 type SignInCredentials = {
   email: string;
@@ -12,7 +13,7 @@ type InitialState = {
   isAuthenticated: boolean;
 };
 
-const user = JSON.parse(localStorage.getItem('user') as string) || null;
+const user = getSafetyLocalStorage<User>('user', true);
 
 const initialState: InitialState = {
   user: user,
@@ -31,17 +32,22 @@ export const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
     },
+    updateUserReducer: (state, action) => {
+      state.user = { ...state.user, ...action.payload };
+    },
   },
 });
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api`,
+  }),
   tagTypes: ['User'],
   endpoints: (builder) => ({
     signIn: builder.mutation({
       query: (credentials: SignInCredentials) => ({
-        url: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/sign-in`,
+        url: `/auth/sign-in`,
         method: 'POST',
         body: credentials,
       }),
@@ -51,4 +57,5 @@ export const authApi = createApi({
 });
 
 export const { useSignInMutation } = authApi;
-export const { signInReducer, signOutReducer } = authSlice.actions;
+export const { signInReducer, signOutReducer, updateUserReducer } =
+  authSlice.actions;

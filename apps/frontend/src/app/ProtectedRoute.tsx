@@ -1,15 +1,19 @@
 'use client';
 
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useLayoutEffect } from 'react';
 import { useAuth } from '../lib/hooks';
 import { redirect } from 'next/navigation';
 
 export const ProtectedRoute: React.FC<PropsWithChildren> = ({ children }) => {
-  const { getTokenAndUser } = useAuth();
-  const { user, token } = getTokenAndUser();
+  const { user, token } = useAuth().getTokenAndUser();
 
-  if (!user || !token) {
-    return redirect('/sign-in');
-  }
+  const onInit = () => {
+    if (!user || !token) {
+      redirect('/sign-in');
+    }
+  };
+
+  useLayoutEffect(onInit, [user, token]);
+
   return children;
 };

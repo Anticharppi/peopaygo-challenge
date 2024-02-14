@@ -10,3 +10,8 @@ export type User = {
   isAdmin: boolean;
   id: number;
 };
+
+export type AggregatedUpdateUserInfo = Omit<User, 'isAdmin'> & {
+  newPassword?: string;
+  currentPassword?: string;
+};

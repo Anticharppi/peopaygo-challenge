@@ -31,11 +31,9 @@ export default function Example() {
     })
       .unwrap()
       .then((data) => {
-        console.log({ data });
-
         storeToken(data.access_token);
         signIn(data.user);
-        showSuccessMessage('Welcome.');
+        showSuccessMessage('Welcome');
       })
       .catch((err: CustomFetchBaseQueryError) => {
         showErrorMessage(err.data.message);

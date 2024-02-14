@@ -9,7 +9,6 @@ export const useForm = (
   const [formErrors, setErrors] = useState<Record<string, string | null>>({});
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setErrors({});
     setValues({
       ...values,
       [e.target.name]: e.target.value,
@@ -19,6 +18,7 @@ export const useForm = (
     if (result.success) {
       setErrors({});
     } else {
+      setErrors({});
       result.error.errors.map((error) => {
         setErrors((prev) => ({
           ...prev,
@@ -32,5 +32,6 @@ export const useForm = (
     values,
     onChange,
     formErrors,
+    setValues,
   };
 };

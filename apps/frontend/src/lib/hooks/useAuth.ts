@@ -2,6 +2,7 @@ import { User } from '@ocmi/frontend/types';
 import { useAppSelector } from './useAppSelector';
 import { useAppDispatch } from './useDispatch';
 import { signInReducer, signOutReducer } from '../features/auth';
+import { getSafetyLocalStorage } from '../utils';
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();
@@ -21,9 +22,13 @@ export const useAuth = () => {
     dispatch(signInReducer(user));
   };
 
+  const injectUserInStore = (user: User) => {
+    dispatch(signInReducer(user));
+  };
+
   const getTokenAndUser = () => {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') as string);
+    const token = getSafetyLocalStorage<string>('token');
+    const user = getSafetyLocalStorage<User>('user');
     return {
       token,
       user,
@@ -43,5 +48,6 @@ export const useAuth = () => {
     storeUser,
     storeToken,
     getTokenAndUser,
+    injectUserInStore,
   };
 };
