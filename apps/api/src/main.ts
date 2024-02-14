@@ -9,7 +9,7 @@ import * as process from 'process';
 
 async function bootstrap() {
   const app = await getApp();
-
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
