@@ -26,8 +26,8 @@ export default function Example() {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     trigger({
-      email: values.email,
-      password: values.password,
+      email: values.email as string,
+      password: values.password as string,
     })
       .unwrap()
       .then((data) => {
@@ -35,9 +35,7 @@ export default function Example() {
         signIn(data.user);
         showSuccessMessage('Welcome');
       })
-      .catch((err: CustomFetchBaseQueryError) => {
-        showErrorMessage(err.data.message);
-      });
+      .catch((err) => showErrorMessage(err.data.message));
   };
 
   return (

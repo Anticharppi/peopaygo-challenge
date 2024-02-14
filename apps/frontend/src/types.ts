@@ -11,6 +11,18 @@ export type User = {
   id: number;
 };
 
+export type Employee = {
+  id: number;
+  name: string;
+  rate: number;
+  paymentType: string;
+};
+
+export type Pagination = {
+  offset: number;
+  limit: number;
+};
+
 export type AggregatedUpdateUserInfo = Omit<User, 'isAdmin'> & {
   newPassword?: string;
   currentPassword?: string;
