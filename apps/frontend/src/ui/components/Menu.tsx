@@ -187,7 +187,7 @@ export const DashboardMenu: React.FC<PropsWithChildren> = ({ children }) => {
         </div>
       </header>
       <main>
-        <div className="mx-auto max-w-7xl px-10 py-6 sm:px-6 lg:px-8">{children}</div>
+        <div className="mx-auto max-w-7xl px-5 py-6 sm:px-6 lg:px-8">{children}</div>
       </main>
     </div>
   );

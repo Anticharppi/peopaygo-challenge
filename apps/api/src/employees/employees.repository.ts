@@ -18,8 +18,24 @@ export class EmployeesRepository {
     });
   }
 
+  async count() {
+    return await this.prisma.employee.count();
+  }
+
   async findAll(pagination: Pagination): Promise<Employee[]> {
     return await this.prisma.employee.findMany({
+      skip: pagination.offset,
+      take: pagination.limit,
+    });
+  }
+
+  async findAllByName(pagination: Pagination, name: string) {
+    return await this.prisma.employee.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
       skip: pagination.offset,
       take: pagination.limit,
     });

@@ -8,6 +8,7 @@ import EmployeesForm from '@ocmi/frontend/ui/components/employees/EmployeesForm'
 import { useEmployees } from '@ocmi/frontend/lib/hooks';
 import { useEffect, useState } from 'react';
 import Button from '@ocmi/frontend/ui/components/Button';
+import { Pagination } from '@ocmi/frontend/types';
 
 const headers = [
   { key: 'id', title: 'ID' },
@@ -16,7 +17,7 @@ const headers = [
   { key: 'paymentType', title: 'Payment Type' },
 ];
 
-const itemsPerPage = 10;
+const itemsPerPage = 5;
 
 const initialState = {
   name: '',
@@ -25,8 +26,13 @@ const initialState = {
   id: 0,
 };
 
+const defaultPagination = {
+  offset: 0,
+  limit: itemsPerPage,
+};
+
 export default function Employees() {
-  const { employees, getEmployees } = useEmployees();
+  const { employees, getEmployees, pagination } = useEmployees();
   const [showModal, setShowModal] = useState(false);
   const [employee, setEmployee] = useState(initialState);
 
@@ -44,11 +50,10 @@ export default function Employees() {
     console.log('Delete employee with id:', id);
   };
 
-  const fetchEmployees = () => {
-    getEmployees({ offset: 0, limit: itemsPerPage });
+  const fetchEmployees = (pagination: Pagination = defaultPagination) => {
+    getEmployees(pagination);
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(fetchEmployees, []);
 
   return (
@@ -68,7 +73,9 @@ export default function Employees() {
           headers={headers}
           onDelete={onDelete}
           onUpdate={onUpdate}
+          totalItems={pagination.count || 0}
           itemsPerPage={itemsPerPage}
+          getMoreData={fetchEmployees}
         />
       </DashboardMenu>
     </ProtectedRoute>

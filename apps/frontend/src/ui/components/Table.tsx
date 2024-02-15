@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Pagination from './Pagination'; // Importa el componente de paginación
 import Button from './Button';
 import { useAuth } from '@ocmi/frontend/lib/hooks';
-
-type DataItem = Record<string, string | number | boolean>;
+import { Pagination as _Pagination } from '@ocmi/frontend/types';
+type DataItem = Record<string, string | number | boolean> & {
+  id: number;
+};
 
 interface TableProps<T> {
   data: DataItem[]; // Array de objetos con propiedades definidas por T
@@ -11,6 +13,8 @@ interface TableProps<T> {
   onDelete: (id: number) => void; // Función para manejar la eliminación de registros
   headers: { key: keyof T; title: string }[]; // Los encabezados de la tabla
   itemsPerPage: number; // Número de elementos por página
+  totalItems: number;
+  getMoreData: (pagination: _Pagination) => void; // Función para obtener más datos de la API
 }
 
 const Table = <T,>({
@@ -19,25 +23,65 @@ const Table = <T,>({
   onDelete,
   headers,
   itemsPerPage,
+  totalItems,
+  getMoreData,
 }: TableProps<T>) => {
   const { user } = useAuth();
-
+  const [currentItems, setCurrentItems] = useState<DataItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+  const [indexedPages, setIndexedPages] = useState<Record<number, DataItem[]>>(
+    {},
+  );
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
+    if (indexedPages[pageNumber]) {
+      setCurrentItems(indexedPages[pageNumber]);
+      return;
+    }
+    getMoreData({
+      limit: itemsPerPage,
+      offset: pageNumber * itemsPerPage - itemsPerPage,
+    });
   };
+
+  useEffect(() => {
+    const indexPage = () => {
+      if (!data.length) return;
+      if (!indexedPages[currentPage]) {
+        const firstItemIndex = data.length - itemsPerPage;
+        const lastItemIndex = data.length;
+        const currentData = data.slice(firstItemIndex, lastItemIndex);
+        const existingIds: number[] = [];
+        for (const key in indexedPages) {
+          existingIds.push(...indexedPages[key].map((item) => item.id));
+        }
+
+        setIndexedPages({
+          ...indexedPages,
+          [currentPage]: currentData.filter(
+            (data) => !existingIds.includes(data.id),
+          ),
+        });
+      }
+    };
+    indexPage();
+  }, [data]);
+
+  useEffect(() => {
+    const updateCurrentItems = () => {
+      if (!indexedPages[currentPage]) return;
+      setCurrentItems(indexedPages[currentPage]);
+    };
+    updateCurrentItems();
+  }, [currentPage, indexedPages]);
 
   return (
     <div>
       <div className="flex justify-end mb-4">
         <Pagination
           itemsPerPage={itemsPerPage}
-          totalItems={data.length}
+          totalItems={totalItems}
           paginate={paginate}
         />
       </div>

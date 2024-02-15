@@ -1,20 +1,36 @@
-import { Employee, Pagination } from '@ocmi/frontend/types';
+import {
+  Employee,
+  GetEmployeesResponse,
+  Pagination,
+} from '@ocmi/frontend/types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getHeaders } from '../../utils';
 
 type InitialState = {
   employees: Employee[];
+  pagination: Pagination;
 };
 
 const initialState: InitialState = {
   employees: [],
+  pagination: {
+    offset: 0,
+    limit: 5,
+    count: 0,
+  },
 };
 
 export const employeesSlice = createSlice({
   name: 'employees',
   initialState,
   reducers: {
+    setEmployeesPaginationReducer: (
+      state,
+      action: PayloadAction<Pagination>,
+    ) => {
+      state.pagination = action.payload;
+    },
     setEmployeesReducer: (state, action: PayloadAction<Employee[]>) => {
       state.employees = action.payload;
     },
@@ -44,7 +60,7 @@ export const employeesApi = createApi({
     baseUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/employees`,
   }),
   endpoints: (builder) => ({
-    getEmployees: builder.query<Employee[], Pagination>({
+    getEmployees: builder.query<GetEmployeesResponse, Pagination>({
       query: (pagination) => ({
         headers: getHeaders(),
         url: `?offset=${pagination.offset}&limit=${pagination.limit}`,
@@ -82,6 +98,7 @@ export const {
   mergeEmployeesReducer,
   updateEmployeeReducer,
   setEmployeesReducer,
+  setEmployeesPaginationReducer,
 } = employeesSlice.actions;
 
 export const {

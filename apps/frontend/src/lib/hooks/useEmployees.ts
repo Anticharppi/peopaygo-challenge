@@ -2,6 +2,7 @@ import {
   addEmployeeReducer,
   mergeEmployeesReducer,
   removeEmployeeReducer,
+  setEmployeesPaginationReducer,
   updateEmployeeReducer,
   useAddEmployeeMutation,
   useLazyGetEmployeesQuery,
@@ -14,7 +15,7 @@ import { useMessage } from './useMessage';
 
 export const useEmployees = () => {
   const dispatch = useAppDispatch();
-  const { employees } = useAppSelector((state) => state.employees);
+  const { employees, pagination } = useAppSelector((state) => state.employees);
   const [triggerGetUsers] = useLazyGetEmployeesQuery();
   const [addEmployeeTrigger] = useAddEmployeeMutation();
   const [updateEmployeeTrigger] = useUpdateEmployeeMutation();
@@ -47,12 +48,16 @@ export const useEmployees = () => {
   const getEmployees = (pagination: Pagination) => {
     triggerGetUsers(pagination)
       .unwrap()
-      .then((data) => dispatch(mergeEmployeesReducer(data)))
+      .then((data) => {
+        dispatch(mergeEmployeesReducer(data.employees));
+        dispatch(setEmployeesPaginationReducer(data.pagination));
+      })
       .catch((err) => showErrorMessage(err.data.message));
   };
 
   return {
     employees,
+    pagination,
     addEmployee,
     updateEmployee,
     removeEmployee,

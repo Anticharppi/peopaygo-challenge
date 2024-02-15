@@ -41,8 +41,9 @@ export class EmployeesController {
   findAll(
     @Query('offset', ParseIntPipe) offset: number = 0,
     @Query('limit', ParseIntPipe) limit: number = 10,
+    @Query('name') name?: string,
   ) {
-    return this.getEmployeesService.execute({ offset, limit });
+    return this.getEmployeesService.execute({ offset, limit, name });
   }
 
   @Patch(':id')
