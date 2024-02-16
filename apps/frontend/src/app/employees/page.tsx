@@ -54,6 +54,7 @@ export default function Employees() {
     getEmployees(pagination);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(fetchEmployees, []);
 
   return (
